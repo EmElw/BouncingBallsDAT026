@@ -9,7 +9,7 @@
  */
 class Model {
 
-    private static final double GRAVITY = 0;
+    private static final double GRAVITY = 0.1;
     double areaWidth, areaHeight;
 
     Ball[] balls;
@@ -20,8 +20,8 @@ class Model {
 
         // Initialize the model with a few balls
         balls = new Ball[2];
-        balls[0] = new Ball(width / 3, height * 0.9, 1.2, 1.6, 0.2);
-        balls[1] = new Ball(2 * width / 3, height * 0.7, -0.6, 0.6, 0.3);
+        balls[0] = new Ball(width / 3, height * 0.9, 0, 0, 0.2);
+        balls[1] = new Ball(2 * width / 3, height * 0.7, 0, 0, 0.3);
     }
 
     void step(double deltaT) {
@@ -34,6 +34,8 @@ class Model {
             if (b.y < b.radius || b.y > areaHeight - b.radius) {
                 b.vy *= -1;
             }
+
+            b.vy-=GRAVITY;
 
             // compute new position according to the speed of the ball
             b.x += deltaT * b.vx;
@@ -60,19 +62,22 @@ class Model {
         double x, y, vx, vy, radius;
 
         public double potentialEnergy() {
+            // calculate the potential energy E = mgh
             return mass() * GRAVITY * y;
         }
 
+        public double kineticEnergy() {
+            // calculate the kinetic energy E = mv/2
+            return 1.0 / 2.0 * mass() * Math.pow(velocity(),2);
+        }
+
         private double mass() {
+            // calculate the mass (volume of sphere: 4/3*pi*r^3
             return 4.0 / 3.0 * Math.PI * Math.pow(radius, 3);
         }
 
-        public double kineticEnergy() {
-            return 1.0 / 2.0 * mass() * velocity();
-        }
-
-        private double velocity() {
-            return Math.sqrt(vx * vx + vy * vy);
+        public double velocity() {
+            return Math.sqrt((vx * vx) + (vy * vy));
         }
 
     }

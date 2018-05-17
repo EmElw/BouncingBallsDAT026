@@ -89,6 +89,13 @@ public final class Animator extends JPanel implements ActionListener {
 
             int xx = (int) (x * pixelsPerMeter);
             int yy = (int) (getHeight() - (y * pixelsPerMeter));
+            int cx = (int) ((x + b.radius) * pixelsPerMeter);
+            int cy = (int) (getHeight() - ((y - b.radius) * pixelsPerMeter));
+
+            for (Model.Ball other : model.balls) {
+                if (b.collidesWith(other))
+                    g2.setColor(Color.BLUE);
+            }
 
             // paint balls (y-coordinates are inverted)
             Ellipse2D.Double e = new Ellipse2D.Double(xx, yy,
@@ -97,11 +104,16 @@ public final class Animator extends JPanel implements ActionListener {
             sumEnergy += b.potentialEnergy() + b.kineticEnergy();
 
             g2.setColor(Color.BLACK);
+
+            g2.drawLine(cx, cy, (int) (cx + 20 * b.vx), (int) (cy - 20 * b.vy));
+            g2.drawLine(cx, cy, (int) (cx + 20 * b.vx), cy);
+            g2.drawLine(cx, cy, cx, (int) (cy - 20 * b.vy));
+
             String str = String.format("Ek %f \n Ep %f \n Et %f",
                     b.kineticEnergy(),
                     b.potentialEnergy(),
                     b.potentialEnergy() + b.kineticEnergy());
-            g2.drawString(str, 10, 10);
+            g2.drawString(str, 10, 10 + 20 * b.idx);
         }
 
         g2.setColor(Color.BLACK);

@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 class Model {
 
-    static final double GRAVITY = 10;
+    static final double GRAVITY = 0;
     double areaWidth, areaHeight;
 
     ArrayList<Ball> balls;
@@ -22,7 +22,8 @@ class Model {
 
         // Initialize the model with a few balls
         balls = new ArrayList<Ball>();
-        balls.add(new Ball(width / 3, height * 0.9, 0, 0, 0.2));
+        balls.add(new Ball(width / 3, height * 1 / 3, 2, 1.1, 0.3));
+        balls.add(new Ball(width / (2 * 3), height * 1 / 3, -0.1, 1.1, 0.2));
     }
 
     void step(double deltaT) {
@@ -55,10 +56,15 @@ class Model {
         }
     }
 
+
+    private static int ballCount = 0;
+
     /**
      * Simple inner class describing balls.
      */
     class Ball {
+        int idx;
+
         double x, y, vx, vy, radius;
 
         public Ball(double x, double y, double vx, double vy, double radius) {
@@ -67,6 +73,7 @@ class Model {
             this.vx = vx;
             this.vy = vy;
             this.radius = radius;
+            this.idx = ++ballCount;
         }
 
         double potentialEnergy() {
@@ -89,5 +96,13 @@ class Model {
             return Math.sqrt((vx * vx) + (vy * vy));
         }
 
+        public boolean collidesWith(Ball other) {
+            return !other.equals(this) && distance(x, y, other.x, other.y) < radius + other.radius;
+        }
+    }
+
+    static double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((x1 - x2) * (x1 - x2) +
+                (y1 - y2) * (y1 - y2));
     }
 }

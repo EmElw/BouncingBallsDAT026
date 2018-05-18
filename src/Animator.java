@@ -93,8 +93,7 @@ public final class Animator extends JPanel implements ActionListener {
             int cy = (int) (getHeight() - ((y - b.radius) * pixelsPerMeter));
 
             for (Model.Ball other : model.balls) {
-                if (b.collidesWith(other))
-                    g2.setColor(Color.BLUE);
+                if (b.collidesWith(other)) g2.setColor(Color.BLUE);
             }
 
             // paint balls (y-coordinates are inverted)
@@ -105,11 +104,13 @@ public final class Animator extends JPanel implements ActionListener {
 
             g2.setColor(Color.BLACK);
 
-            g2.drawLine(cx, cy, (int) (cx + 20 * b.vx), (int) (cy - 20 * b.vy));
-            g2.drawLine(cx, cy, (int) (cx + 20 * b.vx), cy);
-            g2.drawLine(cx, cy, cx, (int) (cy - 20 * b.vy));
+            g2.drawLine(cx, cy, (int) (cx + 20 * b.v.x), (int) (cy - 20 * b.v.y));
+            g2.drawLine(cx, cy, (int) (cx + 20 * b.v.x), cy);
+            g2.drawLine(cx, cy, cx, (int) (cy - 20 * b.v.y));
 
-            String str = String.format("Ek %f \n Ep %f \n Et %f",
+            String str = String.format("x %f y %f Ek %f \n Ep %f \n Et %f",
+                    b.x,
+                    b.y,
                     b.kineticEnergy(),
                     b.potentialEnergy(),
                     b.potentialEnergy() + b.kineticEnergy());

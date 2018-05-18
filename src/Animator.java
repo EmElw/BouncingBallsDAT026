@@ -76,14 +76,14 @@ public final class Animator extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         // clear the canvas
-        g2.setColor(Color.WHITE);
+        g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
         // draw balls
 
         double sumEnergy = 0;
 
         for (Model.Ball b : model.balls) {
-            g2.setColor(Color.RED);
+            g2.setColor(Color.GREEN);
             double x = b.x - b.radius;
             double y = b.y + b.radius;
 
@@ -102,7 +102,7 @@ public final class Animator extends JPanel implements ActionListener {
             g2.fill(e);
             sumEnergy += b.potentialEnergy() + b.kineticEnergy();
 
-            g2.setColor(Color.BLACK);
+            g2.setColor(Color.WHITE);
 
             g2.drawLine(cx, cy, (int) (cx + 20 * b.v.x), (int) (cy - 20 * b.v.y));
             g2.drawLine(cx, cy, (int) (cx + 20 * b.v.x), cy);
@@ -117,8 +117,6 @@ public final class Animator extends JPanel implements ActionListener {
                     b.potentialEnergy() + b.kineticEnergy());
             g2.drawString(str, 10, 10 + 20 * b.idx);
         }
-
-        g2.setColor(Color.BLACK);
         g2.drawString("total energy: " + sumEnergy, 10, 10);
     }
 

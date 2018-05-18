@@ -14,7 +14,7 @@ import java.util.Map;
  */
 class Model {
 
-    static final double GRAVITY = 0;
+    static final double GRAVITY = 10;
     private static final double PRECISION = 0.01;
     double areaWidth, areaHeight;
 
@@ -28,7 +28,7 @@ class Model {
 
         // Initialize the model with a few balls
         balls = new ArrayList<>();
-        balls.add(new Ball(width / 3, height * 1 / 2, 2, 0, 0.2));
+        balls.add(new Ball(width / 3, height * 1 / 2, 2, 0.4, 0.4));
         balls.add(new Ball(width / (2 * 3), height * 1 / 2, -2, 0, 0.2));
 
         paths = new HashMap<>();
@@ -103,10 +103,13 @@ class Model {
                 }
             }
 
-            b.v.y = b.v.y - GRAVITY * deltaT;
 
             b.x = b.x + deltaT * b.v.x;
             b.y = b.y + deltaT * b.v.y;
+
+
+            if (b.y > b.radius)
+                b.v.y = b.v.y - GRAVITY * deltaT;
         }
 
         Ball b1 = balls.get(0);

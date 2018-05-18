@@ -118,7 +118,7 @@ public final class Animator extends JPanel implements ActionListener {
         }
 
         g2.setColor(Color.BLACK);
-//        g2.drawString("total energy: " + sumEnergy, 10, 10);
+        g2.drawString("total energy: " + sumEnergy, 10, 10);
     }
 
     private int count = 0;

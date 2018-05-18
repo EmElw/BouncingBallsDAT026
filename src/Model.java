@@ -26,6 +26,32 @@ class Model {
         balls.add(new Ball(width / (2 * 3), height * 1 / 3, -0.1, 1.1, 0.2));
     }
 
+    void collsion(Ball b1, Ball b2) {
+        System.out.println("collision!");
+        // ball/ball collision
+        double angle = Math.atan((b1.x - b2.x) / (b1.y - b2.y));
+
+        // rotate vector along collision angle
+
+        b1.v.rotate(-angle);
+        b2.v.rotate(-angle);
+
+        // calculate new velocities using conservation of energy
+        double i = b1.mass() * b1.v.x +
+                b2.mass() * b2.v.x;
+
+        double r = -(b2.v.x - b1.v.x);
+
+        b1.v.x = (i - (r * b2.mass())) /
+                (b1.mass() / b2.mass());
+        b2.v.x = r + b1.v.x;
+
+        // return vector to normal form
+
+        b1.v.rotate(angle);
+        b2.v.rotate(angle);
+    }
+
     void step(double deltaT) {
         // TODO this method implements one step of simulation with a step deltaT
 
@@ -39,29 +65,8 @@ class Model {
         Ball b1 = balls.get(0);
         Ball b2 = balls.get(1);
         if (b1.collidesWith(b2)) {
-            System.out.println("collision!");
-            // ball/ball collision
-            double angle = Math.atan((b1.x - b2.x) / (b1.y - b2.y));
 
-            // rotate vector along collision angle
-
-            b1.v.rotate(-angle);
-            b2.v.rotate(-angle);
-
-            // calculate new velocities using conservation of energy
-            double i = b1.mass() * b1.v.x +
-                    b2.mass() * b2.v.x;
-
-            double r = -(b2.v.x - b1.v.x);
-
-            b1.v.x = (i - (r * b2.mass())) /
-                    (b1.mass() / b2.mass());
-            b2.v.x = r + b1.v.x;
-
-            // return vector to normal form
-
-            b1.v.rotate(angle);
-            b2.v.rotate(angle);
+            collsion(b1, b2);
         }
 
         for (Ball b : balls) {
@@ -130,9 +135,8 @@ class Model {
         }
 
         double mass() {
-            return 1;
             // calculate the mass (volume of sphere: 4/3*pi*r^3
-            // return (4.0 / 3.0) * Math.PI * Math.pow(radius, 3);
+            return (4.0 / 3.0) * Math.PI * Math.pow(radius, 3);
         }
 
         double velocity() {

@@ -72,6 +72,11 @@ public final class Animator extends JPanel implements ActionListener {
         timer.stop();
     }
 
+    static Color[] colors = {Color.RED,
+            Color.BLUE,
+            Color.YELLOW,
+            Color.GREEN};
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -83,7 +88,7 @@ public final class Animator extends JPanel implements ActionListener {
         double sumEnergy = 0;
 
         for (Model.Ball b : model.balls) {
-            g2.setColor(Color.RED);
+            g2.setColor(colors[b.idx]);
             double x = b.x - b.radius;
             double y = b.y + b.radius;
 
@@ -115,7 +120,7 @@ public final class Animator extends JPanel implements ActionListener {
                     b.kineticEnergy(),
                     b.potentialEnergy(),
                     b.potentialEnergy() + b.kineticEnergy());
-            g2.drawString(str, 10, 10 + 20 * b.idx);
+            g2.drawString(str, 10, 30 + 20 * b.idx);
         }
 
         g2.setColor(Color.BLACK);

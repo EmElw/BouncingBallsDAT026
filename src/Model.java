@@ -113,7 +113,7 @@ class Model {
             this.v.x = vx;
             this.v.y = vy;
             this.radius = radius;
-            this.idx = ++ballCount;
+            this.idx = ballCount++;
         }
 
         //----

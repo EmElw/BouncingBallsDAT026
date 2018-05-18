@@ -27,30 +27,34 @@ class Model {
 
     void step(double deltaT) {
         // TODO this method implements one step of simulation with a step deltaT
+        // If the ball is at one of the edges and is starting to move through, change the sign of the velocity.
         for (Ball b : balls) {
-            //
             if (b.x < b.radius) {
+                b.x = b.radius;
                 if (b.vx < 0)
                     b.vx *= -1;
             }
             if (b.x > areaWidth - b.radius) {
+                b.x = areaWidth - b.radius;
                 if (b.vx > 0)
                     b.vx *= -1;
             }
             if (b.y < b.radius) {
+                b.y = b.radius;
                 if (b.vy < 0)
                     b.vy *= -1;
             }
             if (b.y > areaHeight - b.radius) {
+                b.y = areaHeight - b.radius;
                 if (b.vy > 0)
                     b.vy *= -1;
             }
 
 
-            b.vy = b.vy - GRAVITY * deltaT;
             // compute new position according to the speed of the ball
             b.x = b.x + deltaT * b.vx;
             b.y = b.y + deltaT * b.vy;
+            b.vy = b.vy - GRAVITY * deltaT;
 
         }
     }
@@ -75,7 +79,7 @@ class Model {
         }
 
         double kineticEnergy() {
-            // calculate the kinetic energy E = mv/2
+            // calculate the kinetic energy E = mv^2/2
             return (1.0 / 2.0) * mass() * Math.pow(velocity(), 2);
         }
 

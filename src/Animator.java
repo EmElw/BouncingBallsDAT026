@@ -76,14 +76,14 @@ public final class Animator extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         // clear the canvas
-        g2.setColor(Color.WHITE);
+        g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
         // draw balls
 
         double sumEnergy = 0;
 
         for (Model.Ball b : model.balls) {
-            g2.setColor(Color.RED);
+            g2.setColor(Color.green);
             double x = b.x - b.radius;
             double y = b.y + b.radius;
 
@@ -94,9 +94,9 @@ public final class Animator extends JPanel implements ActionListener {
             Ellipse2D.Double e = new Ellipse2D.Double(xx, yy,
                     b.radius * 2 * pixelsPerMeter, b.radius * 2 * pixelsPerMeter);
             g2.fill(e);
-            sumEnergy += b.potentialEnergy() + b.kineticEnergy();
+            // sumEnergy += b.potentialEnergy() + b.kineticEnergy();
 
-            g2.setColor(Color.BLACK);
+            g2.setColor(Color.WHITE);
             String str = String.format("Ek %f \n Ep %f \n Et %f",
                     b.kineticEnergy(),
                     b.potentialEnergy(),
@@ -104,8 +104,8 @@ public final class Animator extends JPanel implements ActionListener {
             g2.drawString(str, 10, 10);
         }
 
-        g2.setColor(Color.BLACK);
-//        g2.drawString("total energy: " + sumEnergy, 10, 10);
+        // g2.setColor(Color.BLACK);
+        // g2.drawString("total energy: " + sumEnergy, 10, 10);
     }
 
     private int count = 0;

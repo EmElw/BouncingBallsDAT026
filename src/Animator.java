@@ -108,9 +108,10 @@ public final class Animator extends JPanel implements ActionListener {
             g2.drawLine(cx, cy, (int) (cx + 20 * b.v.x), cy);
             g2.drawLine(cx, cy, cx, (int) (cy - 20 * b.v.y));
 
-            String str = String.format("x %f y %f Ek %f \n Ep %f \n Et %f",
+            String str = String.format("x %f y %f m %f Ek %f \n Ep %f \n Et %f",
                     b.x,
                     b.y,
+                    b.mass(),
                     b.kineticEnergy(),
                     b.potentialEnergy(),
                     b.potentialEnergy() + b.kineticEnergy());

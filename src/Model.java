@@ -12,6 +12,7 @@ import java.util.ArrayList;
 class Model {
 
     static final double GRAVITY = 0;
+    private static final double PRECISION = 0.01;
     double areaWidth, areaHeight;
 
     ArrayList<Ball> balls;
@@ -22,14 +23,19 @@ class Model {
 
         // Initialize the model with a few balls
         balls = new ArrayList<Ball>();
-        balls.add(new Ball(width / 3, height * 1 / 3, 2, 1.1, 0.3));
-        balls.add(new Ball(width / (2 * 3), height * 1 / 3, -0.1, 1.1, 0.2));
+        balls.add(new Ball(width / 3, height * 1 / 2, 2, 5, 0.2));
+        balls.add(new Ball(width / (2 * 3), height * 1 / 2, -0.1, 0, 0.2));
     }
 
-    void collsion(Ball b1, Ball b2) {
+    static boolean collisionEnabled = true;
+
+    void applyCollision(Ball b1, Ball b2) {
+        if (!collisionEnabled)
+            return;
         System.out.println("collision!");
+        System.out.println(b1.v + " - " + b2.v);
         // ball/ball collision
-        double angle = Math.atan((b1.x - b2.x) / (b1.y - b2.y));
+        double angle = Math.atan((b1.y - b2.y) / (b1.x - b2.x));
 
         // rotate vector along collision angle
 
@@ -47,31 +53,15 @@ class Model {
         b2.v.x = r + b1.v.x;
 
         // return vector to normal form
-
         b1.v.rotate(angle);
         b2.v.rotate(angle);
+
+        System.out.println(b1.v + " - " + b2.v);
     }
 
     void step(double deltaT) {
-        // TODO this method implements one step of simulation with a step deltaT
-
-        // ball collision
-//        for (Ball b : balls) {
-//            for (Ball o : balls) {
-//
-//            }
-//        }
-
-        Ball b1 = balls.get(0);
-        Ball b2 = balls.get(1);
-        if (b1.collidesWith(b2)) {
-
-            collsion(b1, b2);
-        }
-
         for (Ball b : balls) {
 
-            //
             if (b.x < b.radius) {
                 if (b.v.x < 0)
                     b.v.x *= -1;
@@ -89,15 +79,19 @@ class Model {
                     b.v.y *= -1;
             }
 
-
             b.v.y = b.v.y - GRAVITY * deltaT;
-            // compute new position according to the speed of the ball
+
             b.x = b.x + deltaT * b.v.x;
             b.y = b.y + deltaT * b.v.y;
+        }
 
+        Ball b1 = balls.get(0);
+        Ball b2 = balls.get(1);
+
+        if (b1.collidesWith(b2)) {
+            applyCollision(b1, b2);
         }
     }
-
 
     private static int ballCount = 0;
 
@@ -154,6 +148,12 @@ class Model {
     }
 
     class Vector {
+
+        @Override
+        public String toString() {
+            return String.format("{x: %f, y: %f}",
+                    x, y);
+        }
 
         // rectangular form vector
         double x;

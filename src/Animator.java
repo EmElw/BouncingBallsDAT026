@@ -9,6 +9,7 @@ import java.awt.geom.Ellipse2D;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -97,8 +98,21 @@ public final class Animator extends JPanel implements ActionListener {
             int cx = (int) ((x + b.radius) * pixelsPerMeter);
             int cy = (int) (getHeight() - ((y - b.radius) * pixelsPerMeter));
 
+
+            List<Model.Point> path = model.paths.get(b);
+
+
+//            for (int i = 1; i < path.size(); i++) {
+//                g2.drawLine(
+//                        (int) (path.get(i - 1).x * pixelsPerMeter),
+//                        getHeight() - (int) (path.get(i - 1).y * pixelsPerMeter),
+//                        (int) (path.get(i).x * pixelsPerMeter),
+//                        getHeight() - (int) (path.get(i).y * pixelsPerMeter)
+//                );
+//            }
+
             for (Model.Ball other : model.balls) {
-                if (b.collidesWith(other)) g2.setColor(Color.BLUE);
+                if (b.collidesWith(other)) g2.setColor(Color.BLACK);
             }
 
             // paint balls (y-coordinates are inverted)

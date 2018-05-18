@@ -165,7 +165,30 @@ class Model {
         }
 
         public boolean collidesWith(Ball other) {
-            return !other.equals(this) && distance(x, y, other.x, other.y) < radius + other.radius;
+            if (!(!other.equals(this) && distance(x, y, other.x, other.y) < radius + other.radius))
+                return false;
+
+            // they do not collide if they move away from each other
+
+            Vector r = v.minus(other.v);
+            double dx = x - other.x;
+            double dy = y - other.x;
+
+            // if the sign of
+            if (Math.signum(dx * r.x) == 1 && Math.signum(dy * r.y) == 1) {
+                System.out.println("stopped illegal collision! ");
+                return false;
+            }
+
+//            double dx = x - other.x;
+//            double dy = y - other.y;
+//            double colAngle = Math.atan(dy / dx);
+//            double myAngle = 0;
+//            double otherAngle = 0;
+//
+//            if ((myAngle - colAngle)
+
+            return true;
         }
     }
 
@@ -219,6 +242,9 @@ class Model {
             y = r * Math.sin(angle);
         }
 
+        public Vector minus(Vector ov) {
+            return new Vector(x - ov.x, y - ov.y);
+        }
     }
 
     class Point {

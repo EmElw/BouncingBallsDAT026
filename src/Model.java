@@ -11,183 +11,184 @@ import java.util.*;
  */
 class Model {
 
-    private static final double GRAVITY = 10;
-    private static final double TAU = 2 * Math.PI;
-    private double areaWidth, areaHeight;
+	private static final double GRAVITY = 10;
+	private static final double TAU = 2 * Math.PI;
+	private double areaWidth, areaHeight;
 
-    List<Ball> balls;
+	List<Ball> balls;
 
-    Model(double width, double height) {
-        areaWidth = width;
-        areaHeight = height;
+	Model(double width, double height) {
+		areaWidth = width;
+		areaHeight = height;
 
-        // Initialize the model with a few balls
-        balls = new ArrayList<>();
-        balls.add(new Ball(width / 3, height * 1 / 2, 2, 0.4, 0.4));
-        balls.add(new Ball(width / (2 * 3), height * 1 / 2, -2, 0, 0.2));
-        balls.add(new Ball(width / 8, height * 2 / 3, 2, 0.4, 0.3));
-        balls.add(new Ball(width / (2), height * 1 / 2, -2, 0, 0.1));
-    }
-
-
-    private void applyCollision(Ball b1, Ball b2) {
-        // ball/ball collision
-        double dy = b1.y - b2.y;
-        double dx = b1.x - b2.x;
-        double angle = Math.atan(dy / dx);
-        if (dx < 0) {
-            angle += Math.PI;
-        }
+		// Initialize the model with a few balls
+		balls = new ArrayList<>();
+		balls.add(new Ball(width / 3, height * 1 / 2, 2, 0.4, 0.4));
+		balls.add(new Ball(width / (2 * 3), height * 1 / 2, -2, 0, 0.2));
+		balls.add(new Ball(width / 8, height * 2 / 3, 2, 0.4, 0.3));
+	}
 
 
-        // rotate vector along collision angle
-        b1.v.rotate(-angle);
-        b2.v.rotate(-angle);
+	private void applyCollision(Ball b1, Ball b2) {
+		// ball/ball collision
+		double dy = b1.y - b2.y;
+		double dx = b1.x - b2.x;
+		double angle = Math.atan(dy / dx);
+		// find the correct solution to atan
+		if (dx < 0) {
+			angle += Math.PI;
+		}
 
-        // ignore collisions between balls moving away from each other
-        if (!(    // b1 is left ball and has lower v.x than b2
-                (3 / 4 * TAU > angle && angle > 1 / 4 * TAU) && b1.v.x < b2.v.x ||
-                        // b1 is right ball and has higher v.x than b2
-                        (3 / 4 * TAU < angle || angle < 1 / 4 * TAU) && b1.v.x > b2.v.x)) {
+		// rotate vector along collision angle
+		b1.v.rotate(-angle);
+		b2.v.rotate(-angle);
 
-            // calculate total momentum
-            double i = b1.mass() * b1.v.x +
-                    b2.mass() * b2.v.x;
+		// ignore collisions between balls that are moving away from each other
+		// i. e. only collide if not invalid collision
+		if (!(  // if b1 is left ball and has lower v.x than b2 the collision is invalid
+				(3 / 4 * TAU > angle && angle > 1 / 4 * TAU) && b1.v.x < b2.v.x ||
+				// if b1 is right ball and has higher v.x than b2 the collision is invalid
+				(3 / 4 * TAU < angle || angle < 1 / 4 * TAU) && b1.v.x > b2.v.x)) {
 
-            // relative velocity
-            double r = -(b2.v.x - b1.v.x);
+			// calculate total momentum
+			double i = b1.mass() * b1.v.x +
+					b2.mass() * b2.v.x;
 
-            b1.v.x = (i - (r * b2.mass())) /
-                    (b1.mass() + b2.mass());
-            b2.v.x = r + b1.v.x;
-        }
+			// relative velocity
+			double r = -(b2.v.x - b1.v.x);
 
-        // return vector to normal form
-        b1.v.rotate(angle);
-        b2.v.rotate(angle);
+			b1.v.x = (i - (r * b2.mass())) /
+					(b1.mass() + b2.mass());
+			b2.v.x = r + b1.v.x;
+		}
 
-        System.out.println(b1.v + " - " + b2.v);
-    }
+		// return vector to normal form
+		b1.v.rotate(angle);
+		b2.v.rotate(angle);
+	}
 
-    void step(double deltaT) {
-        for (Ball b : balls) {
+	void step(double deltaT) {
+		for (Ball b : balls) {
 
-            // bordering (limiting the balls to a specific area)
-            if (b.x < b.radius && b.v.x < 0)                // left side
-                b.v.x *= -1;
+			// bordering (limiting the balls to a specific area)
+			if (b.x < b.radius && b.v.x < 0)                // left side
+				b.v.x *= -1;
 
-            if (b.x > areaWidth - b.radius && b.v.x > 0)    // right side
-                b.v.x *= -1;
+			if (b.x > areaWidth - b.radius && b.v.x > 0)    // right side
+				b.v.x *= -1;
 
-            if (b.y < b.radius && b.v.y < 0)                // bottom
-                b.v.y *= -1;
+			if (b.y < b.radius && b.v.y < 0)                // bottom
+				b.v.y *= -1;
 
-            if (b.y > areaHeight - b.radius && b.v.y > 0)   // top
-                b.v.y *= -1;
+			if (b.y > areaHeight - b.radius && b.v.y > 0)   // top
+				b.v.y *= -1;
 
-            // apply movement based on simulated time
-            b.x = b.x + deltaT * b.v.x;
-            b.y = b.y + deltaT * b.v.y;
+			// apply movement based on simulated time
+			b.x = b.x + deltaT * b.v.x;
+			b.y = b.y + deltaT * b.v.y;
 
-            // apply gravity
-            // the check simulates normal force, as balls in contact with the floor do not accelerate downwards
-            if (b.y > b.radius)
-                b.v.y = b.v.y - GRAVITY * deltaT;
-        }
+			// apply gravity
+			// the check simulates normal force, as balls in contact with the floor should not accelerate downwards
+			if (b.y > b.radius)
+				b.v.y = b.v.y - GRAVITY * deltaT;
+		}
 
-        // Apply collisions
-        // applies collision twice for each pair of balls, but this is problem is handled in applyCollision
-        for (Ball b : balls) {
-            for (Ball o : balls) {
-                if (b.collidesWith(o)) {
-                    applyCollision(b, o);
-                }
-            }
-        }
-    }
+		// Apply collisions
+		// applies collision twice for each pair of balls, but this is problem is handled in applyCollision
+		for (Ball b : balls) {
+			for (Ball o : balls) {
+				if (b.collidesWith(o)) {
+					applyCollision(b, o);
+				}
+			}
+		}
+	}
 
-    private static int ballCount = 0;
+	private static int ballCount = 0;
 
-    /**
-     * Simple inner class describing balls.
-     */
-    class Ball {
+	/**
+	 * Simple inner class describing balls.
+	 */
+	class Ball {
 
-        int idx;
+		int idx;
 
-        Vector v;
+		Vector v;
 
-        double x, y, radius;
+		double x, y, radius;
 
-        Ball(double x, double y, double vx, double vy, double radius) {
-            v = new Vector(0, 0);
-            this.x = x;
-            this.y = y;
-            this.v.x = vx;
-            this.v.y = vy;
-            this.radius = radius;
-            this.idx = ballCount++;
-        }
+		Ball(double x, double y, double vx, double vy, double radius) {
+			v = new Vector(0, 0);
+			this.x = x;
+			this.y = y;
+			this.v.x = vx;
+			this.v.y = vy;
+			this.radius = radius;
+			this.idx = ballCount++;
+		}
 
-        //----
+		//----
 
-        double potentialEnergy() {
-            // calculate the potential energy E = mgh
-            return mass() * GRAVITY * y;
-        }
+		double potentialEnergy() {
+			// calculate the potential energy E = mgh
+			return mass() * GRAVITY * y;
+		}
 
-        double kineticEnergy() {
-            // calculate the kinetic energy E = mv/2
-            return (1.0 / 2.0) * mass() * Math.pow(velocity(), 2);
-        }
+		double kineticEnergy() {
+			// calculate the kinetic energy E = mv/2
+			return (1.0 / 2.0) * mass() * Math.pow(velocity(), 2);
+		}
 
-        double mass() {
-            // calculate the mass (volume of sphere: 4/3*pi*r^3
-            return (4.0 / 3.0) * Math.PI * Math.pow(radius, 3);
-        }
+		double mass() {
+			// calculate the mass (volume of sphere: 4/3*pi*radius^3
+			return (4.0 / 3.0) * Math.PI * Math.pow(radius, 3);
+		}
 
-        double velocity() {
-            return Math.sqrt((v.x * v.x) + (v.y * v.y));
-        }
+		double velocity() {
+			return Math.sqrt((v.x * v.x) + (v.y * v.y));
+		}
 
-        boolean collidesWith(Ball o) {
-            return !o.equals(this) && Math.sqrt((x - o.x) * (x - o.x) +
-                    (y - o.y) * (y - o.y)) < radius + o.radius;
-        }
-    }
-    class Vector {
+		boolean collidesWith(Ball o) {
+			return !o.equals(this) && Math.sqrt((x - o.x) * (x - o.x) +
+					(y - o.y) * (y - o.y)) < radius + o.radius;
+		}
+	}
 
-        // rectangular form vector
-        double x;
-        double y;
+	class Vector {
 
-        //used for polar vector
-        double r;       // radius
-        double angle;
+		// rectangular form vector
+		double x;
+		double y;
 
-        Vector(double x, double y) {
-            this.x = x;
-            this.y = y;
-            this.r = 0;
-            this.angle = 0;
-        }
+		//used for polar vector
+		double radius;
+		double angle;
 
-        // rotates the coordinate system of the vector by angle radians
-        void rotate(double angle) {
-            rectToPolar();
-            this.angle += angle;
-            polarToRect();
-        }
+		Vector(double x, double y) {
+			this.x = x;
+			this.y = y;
+			this.radius = 0;
+			this.angle = 0;
+		}
 
-        private void rectToPolar() {
-            r = Math.sqrt(x * x + y * y);
-            angle = Math.atan(y / x);
-            if (x < 0) angle += Math.PI;
-        }
+		// rotates the coordinate system of the vector by angle radians
+		void rotate(double angle) {
+			rectToPolar();
+			this.angle += angle;
+			polarToRect();
+		}
 
-        private void polarToRect() {
-            x = r * Math.cos(angle);
-            y = r * Math.sin(angle);
-        }
-    }
+		// convert rectangular vector to polar form
+		private void rectToPolar() {
+			radius = Math.sqrt(x * x + y * y);
+			angle = Math.atan(y / x);
+			if (x < 0) angle += Math.PI;
+		}
+
+		// convert polar vector to rectangular form
+		private void polarToRect() {
+			x = radius * Math.cos(angle);
+			y = radius * Math.sin(angle);
+		}
+	}
 }
